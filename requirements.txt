@@ -1,0 +1,16 @@
+# DStack Signature Verification Dependencies
+
+# Core DStack SDK
+dstack-sdk
+
+# Ethereum cryptography
+eth-account>=0.13.0
+eth-keys>=0.4.0
+eth-utils>=5.0.0
+ecdsa>=0.18.0
+
+# Web3 for contract interactions
+web3>=7.0.0
+
+# HTTP requests for CVM testing
+requests>=2.28.0
