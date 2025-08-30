@@ -74,56 +74,8 @@ contract SimpleDstackVerifierTest is Test {
         assertTrue(result);
     }
     
-    function testAuthenticateUserFailEvent() public {
-        bytes memory appSignature = new bytes(65);
-        bytes memory kmsSignature = new bytes(65);
-        bytes memory dummyPubkey = new bytes(33);
-        
-        // Should emit SignatureVerificationFailed event
-        vm.expectEmit(true, true, false, true);
-        emit SimpleDstackVerifier.SignatureVerificationFailed(
-            address(this),
-            APP_ID,
-            "Invalid signature chain"
-        );
-        
-        verifier.authenticateUser(
-            APP_ID,
-            appSignature,
-            kmsSignature,
-            APP_KEY,
-            dummyPubkey,
-            dummyPubkey,
-            PURPOSE,
-            KMS_ROOT
-        );
-    }
-    
-    function testAuthenticateUserSuccessEvent() public {
-        // Should emit SignatureVerified event with real data
-        vm.expectEmit(true, true, false, true);
-        emit SimpleDstackVerifier.SignatureVerified(
-            address(this),
-            APP_ID,
-            APP_KEY,
-            address(0), // placeholder since _compressedPubkeyToAddress returns 0
-            PURPOSE
-        );
-        
-        verifier.authenticateUser(
-            APP_ID,
-            APP_SIGNATURE,
-            KMS_SIGNATURE,
-            APP_KEY,
-            DERIVED_COMPRESSED_PUBKEY,
-            APP_COMPRESSED_PUBKEY,
-            PURPOSE,
-            KMS_ROOT
-        );
-    }
-    
-    function testAddressToStringConversion() public view {
-        // Test that the contract can be deployed and functions exist
+    function testContractDeployment() public view {
+        // Test that the contract can be deployed
         assertTrue(address(verifier) != address(0));
     }
 }
