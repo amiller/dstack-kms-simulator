@@ -11,6 +11,9 @@ This script demonstrates the complete flow:
 import requests
 import json
 from web3 import Web3
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from signature_proof import SignatureProofGenerator
 
 # UPDATE THESE VALUES WITH YOUR DEPLOYMENT

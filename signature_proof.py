@@ -8,6 +8,7 @@ Simplified module for verifying DStack signature chains that prove:
 """
 
 import hashlib
+import os
 from dataclasses import dataclass
 from dstack_sdk import DstackClient
 from eth_account import Account
@@ -29,7 +30,6 @@ class SignatureProofGenerator:
     def __init__(self, dstack_socket: str = None):
         # Default to production socket, fallback to simulator
         if dstack_socket is None:
-            import os
             if os.path.exists('/var/run/dstack.sock'):
                 dstack_socket = '/var/run/dstack.sock'
             else:
