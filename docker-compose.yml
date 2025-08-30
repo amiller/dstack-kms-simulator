@@ -1,3 +1,4 @@
+# test1
 services:
   app:
     build:
@@ -12,7 +13,7 @@ services:
       - /var/run/dstack.sock:/var/run/dstack.sock
     command: |
       bash -c '
-      python -c "
+      cat > /tmp/app.py << "EOF"
       import hashlib
       from dataclasses import dataclass
       from dstack_sdk import DstackClient
@@ -30,15 +31,15 @@ services:
           app_address: str
 
       class SignatureProofGenerator:
-          def __init__(self, dstack_socket='/var/run/dstack.sock'):
+          def __init__(self, dstack_socket="/var/run/dstack.sock"):
               self.client = DstackClient(dstack_socket)
           
-          def generate_proof(self, key_path, purpose='mainnet'):
+          def generate_proof(self, key_path, purpose="mainnet"):
               response = self.client.get_key(key_path, purpose)
               
-              derived_private_key = bytes.fromhex(response.key.replace('0x', ''))
-              app_signature = bytes.fromhex(response.signature_chain[0].replace('0x', ''))
-              kms_signature = bytes.fromhex(response.signature_chain[1].replace('0x', ''))
+              derived_private_key = bytes.fromhex(response.key.replace("0x", ""))
+              app_signature = bytes.fromhex(response.signature_chain[0].replace("0x", ""))
+              kms_signature = bytes.fromhex(response.signature_chain[1].replace("0x", ""))
               
               derived_account = Account.from_key(derived_private_key)
               derived_address = derived_account.address
@@ -46,7 +47,7 @@ services:
               # Recover app address from signature
               derived_public_key = keys.PrivateKey(derived_private_key).public_key
               derived_pubkey_sec1 = derived_public_key.to_compressed_bytes()
-              message = f'{purpose}:{derived_pubkey_sec1.hex()}'
+              message = f"{purpose}:{derived_pubkey_sec1.hex()}"
               message_hash = keccak(text=message)
               app_address = Account._recover_hash(message_hash, signature=app_signature)
               
@@ -59,14 +60,16 @@ services:
               )
 
       generator = SignatureProofGenerator()
-      proof = generator.generate_proof('wallet/ethereum', 'mainnet')
+      proof = generator.generate_proof("wallet/ethereum", "mainnet")
       
-      print('DStack Signature Data:')
+      print("DStack Signature Data:")
       print(json.dumps({
-        'derived_key': proof.derived_private_key.hex(),
-        'app_signature': proof.app_signature.hex(),
-        'kms_signature': proof.kms_signature.hex(),
-        'derived_address': proof.derived_address,
-        'app_address': proof.app_address
+        "derived_key": proof.derived_private_key.hex(),
+        "app_signature": proof.app_signature.hex(),
+        "kms_signature": proof.kms_signature.hex(),
+        "derived_address": proof.derived_address,
+        "app_address": proof.app_address
       }, indent=2))
-      "
+      EOF
+      python /tmp/app.py
+      '
